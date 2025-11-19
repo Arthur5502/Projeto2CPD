@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  # Serviço de Banco de Dados PostgreSQL
+  db:
+    image: postgres:15-alpine
+    container_name: desafio3-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: productsdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+
+  # Serviço de Cache Redis
+  cache:
+    image: redis:7-alpine
+    container_name: desafio3-cache
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    ports:
+      - "6379:6379"
+
+  # Serviço Web (Flask API)
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: desafio3-web
+    restart: unless-stopped
+    environment:
+      DB_HOST: db
+      DB_NAME: productsdb
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_PORT: 5432
+      REDIS_HOST: cache
+      REDIS_PORT: 6379
+      FLASK_ENV: production
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    networks:
+      - app-network
+    ports:
+      - "5000:5000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+# Volumes nomeados para persistência de dados
+volumes:
+  postgres_data:
+    name: desafio3_postgres_data
+  redis_data:
+    name: desafio3_redis_data
+
+# Rede interna para comunicação entre serviços
+networks:
+  app-network:
+    name: desafio3-network
+    driver: bridge
