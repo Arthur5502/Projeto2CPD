@@ -12,13 +12,14 @@ CREATE INDEX IF NOT EXISTS idx_products_name ON products(name);
 
 CREATE INDEX IF NOT EXISTS idx_products_created_at ON products(created_at);
 
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = CURRENT_TIMESTAMP;
-    RETURN NEW;
+CREATE
+OR REPLACE FUNCTION update_updated_at_column() RETURNS TRIGGER AS $ $ BEGIN NEW.updated_at = CURRENT_TIMESTAMP;
+
+RETURN NEW;
+
 END;
-$$ language 'plpgsql';
+
+$ $ language 'plpgsql';
 
 CREATE TRIGGER update_products_updated_at BEFORE
 UPDATE
@@ -58,8 +59,14 @@ VALUES
         20
     ) ON CONFLICT DO NOTHING;
 
-DO $$
-BEGIN
-    RAISE NOTICE 'Banco de dados inicializado com sucesso!';
-    RAISE NOTICE 'Total de produtos: %', (SELECT COUNT(*) FROM products);
-END $$;
+DO $ $ BEGIN RAISE NOTICE 'Banco de dados inicializado com sucesso!';
+
+RAISE NOTICE 'Total de produtos: %',
+(
+    SELECT
+        COUNT(*)
+    FROM
+        products
+);
+
+END $ $;
