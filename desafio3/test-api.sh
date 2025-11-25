@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Script para testar a API do Desafio 3
 
 echo "==========================================================="
 echo "Testando API de Produtos - Desafio 3"

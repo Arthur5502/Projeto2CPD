@@ -1,8 +1,3 @@
-"""
-Aplicação Web (Flask) - Desafio 3
-Sistema de gerenciamento de produtos com cache Redis e banco PostgreSQL
-"""
-
 from flask import Flask, jsonify, request
 import psycopg2
 import redis
@@ -13,14 +8,12 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# Configuração de logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
 
-# Configurações do banco de dados
 DB_CONFIG = {
     'host': os.getenv('DB_HOST', 'db'),
     'database': os.getenv('DB_NAME', 'productsdb'),
@@ -29,26 +22,21 @@ DB_CONFIG = {
     'port': os.getenv('DB_PORT', '5432')
 }
 
-# Configurações do Redis
 REDIS_HOST = os.getenv('REDIS_HOST', 'cache')
 REDIS_PORT = int(os.getenv('REDIS_PORT', '6379'))
-CACHE_EXPIRATION = 300  # 5 minutos
+CACHE_EXPIRATION = 300
 
-# Conexões
 db_conn = None
 redis_client = None
 
 def get_db_connection():
-    """Obtém conexão com o banco de dados"""
     return psycopg2.connect(**DB_CONFIG)
 
 def get_redis_client():
-    """Obtém cliente Redis"""
     return redis.Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=True)
 
 @app.before_request
 def initialize_connections():
-    """Inicializa conexões antes da primeira requisição"""
     global db_conn, redis_client
     if db_conn is None:
         try:
@@ -67,7 +55,6 @@ def initialize_connections():
 
 @app.route('/')
 def home():
-    """Endpoint principal"""
     return jsonify({
         "service": "Product Management API",
         "version": "1.0.0",
@@ -85,7 +72,6 @@ def home():
 
 @app.route('/health')
 def health():
-    """Health check - verifica status de todas as dependências"""
     health_status = {
         "service": "web",
         "status": "healthy",
@@ -93,7 +79,6 @@ def health():
         "dependencies": {}
     }
     
-    # Verifica PostgreSQL
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -105,7 +90,6 @@ def health():
         health_status["dependencies"]["database"] = f"unhealthy: {str(e)}"
         health_status["status"] = "degraded"
     
-    # Verifica Redis
     try:
         client = get_redis_client()
         client.ping()
@@ -119,10 +103,8 @@ def health():
 
 @app.route('/products', methods=['GET'])
 def get_products():
-    """Lista todos os produtos (com cache)"""
     cache_key = "products:all"
     
-    # Tenta obter do cache
     try:
         cached_data = redis_client.get(cache_key)
         if cached_data:
@@ -134,7 +116,6 @@ def get_products():
     except Exception as e:
         logger.warning(f"Erro ao acessar cache: {e}")
     
-    # Busca no banco de dados
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -159,7 +140,6 @@ def get_products():
         cursor.close()
         conn.close()
         
-        # Armazena no cache
         try:
             redis_client.setex(cache_key, CACHE_EXPIRATION, json.dumps(products))
             logger.info("✓ Produtos armazenados no cache Redis")
@@ -178,10 +158,8 @@ def get_products():
 
 @app.route('/products/<int:product_id>', methods=['GET'])
 def get_product(product_id):
-    """Busca produto por ID (com cache)"""
     cache_key = f"product:{product_id}"
     
-    # Tenta obter do cache
     try:
         cached_data = redis_client.get(cache_key)
         if cached_data:
@@ -193,7 +171,6 @@ def get_product(product_id):
     except Exception as e:
         logger.warning(f"Erro ao acessar cache: {e}")
     
-    # Busca no banco
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -218,7 +195,6 @@ def get_product(product_id):
                 "updated_at": row[6].isoformat()
             }
             
-            # Armazena no cache
             try:
                 redis_client.setex(cache_key, CACHE_EXPIRATION, json.dumps(product))
             except Exception as e:
@@ -238,7 +214,6 @@ def get_product(product_id):
 
 @app.route('/products', methods=['POST'])
 def create_product():
-    """Cria novo produto"""
     data = request.get_json()
     
     required_fields = ['name', 'price', 'stock']
@@ -265,7 +240,6 @@ def create_product():
         cursor.close()
         conn.close()
         
-        # Invalida cache
         try:
             redis_client.delete("products:all")
             logger.info("✓ Cache de produtos invalidado")
@@ -284,12 +258,10 @@ def create_product():
 
 @app.route('/stats')
 def get_stats():
-    """Retorna estatísticas do sistema"""
     stats = {
         "timestamp": datetime.now().isoformat()
     }
     
-    # Estatísticas do banco
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -304,7 +276,6 @@ def get_stats():
     except Exception as e:
         stats["database_error"] = str(e)
     
-    # Estatísticas do cache
     try:
         info = redis_client.info()
         stats["cache"] = {

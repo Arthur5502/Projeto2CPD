@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Script para parar e limpar recursos do Desafio 3
 
 echo "==========================================================="
 echo "Parando Desafio 3 - Docker Compose"

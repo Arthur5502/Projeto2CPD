@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Script para executar o Desafio 3 - Docker Compose
 
 echo "==========================================================="
 echo "Desafio 3 - Docker Compose Orquestrando Serviços"
@@ -69,7 +68,6 @@ echo -e "\n==========================================================="
 echo -e "${GREEN}HEALTH CHECK${NC}"
 echo -e "==========================================================="
 
-# Testa cada serviço
 echo -e "\n${BLUE}Testando serviço Web...${NC}"
 if curl -s http://localhost:5000/health > /dev/null; then
     echo -e "${GREEN}✓ Serviço Web está saudável${NC}"

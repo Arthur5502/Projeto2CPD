@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Script para parar e limpar recursos do Desafio 4
 
 echo "================================================================="
 echo "Parando Desafio 4 - Microsserviços Independentes"

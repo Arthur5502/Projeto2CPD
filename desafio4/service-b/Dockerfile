@@ -1,4 +1,3 @@
-# Dockerfile para Microsserviço B (Agregador)
 FROM python:3.11-slim
 
 WORKDIR /app

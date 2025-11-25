@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Script para parar e limpar recursos do Desafio 2
 
 echo "======================================"
 echo "Parando Desafio 2 - Volumes e Persistência"

@@ -1,8 +1,3 @@
-"""
-Microsserviço 2 - Orders Service
-Gerencia pedidos
-"""
-
 from flask import Flask, jsonify, request
 import logging
 from datetime import datetime

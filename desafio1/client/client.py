@@ -1,25 +1,17 @@
-"""
-Cliente HTTP - Desafio 1
-Este cliente realiza requisições periódicas ao servidor web.
-"""
-
 import requests
 import time
 import logging
 from datetime import datetime
 
-# Configuração de logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
-# URL do servidor (usando o nome do container na rede Docker)
 SERVER_URL = "http://web-server:8080"
-REQUEST_INTERVAL = 5  # Intervalo entre requisições em segundos
+REQUEST_INTERVAL = 5
 
 def make_request():
-    """Realiza uma requisição HTTP ao servidor"""
     try:
         logging.info(f"Enviando requisição para {SERVER_URL}")
         response = requests.get(SERVER_URL, timeout=10)
@@ -47,7 +39,6 @@ def make_request():
         return False
 
 def check_health():
-    """Verifica o health do servidor"""
     try:
         response = requests.get(f"{SERVER_URL}/health", timeout=5)
         if response.status_code == 200:
@@ -59,14 +50,12 @@ def check_health():
         return False
 
 def main():
-    """Função principal do cliente"""
     logging.info("=" * 60)
     logging.info("Cliente HTTP iniciado")
     logging.info(f"Servidor alvo: {SERVER_URL}")
     logging.info(f"Intervalo entre requisições: {REQUEST_INTERVAL} segundos")
     logging.info("=" * 60)
     
-    # Aguarda o servidor estar pronto (retry logic)
     max_retries = 10
     retry_count = 0
     
@@ -82,7 +71,6 @@ def main():
         logging.error("✗ Não foi possível conectar ao servidor após várias tentativas")
         return
     
-    # Loop principal de requisições
     request_count = 0
     
     try:

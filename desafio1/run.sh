@@ -1,22 +1,17 @@
 #!/bin/bash
 
-# Script para executar o Desafio 1 - Containers em Rede
-# Este script automatiza a criação da rede, build e execução dos containers
 
 echo "======================================"
 echo "Desafio 1 - Containers em Rede"
 echo "======================================"
 
-# Cores para output
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-# Nome da rede customizada
 NETWORK_NAME="desafio1-network"
 
-# Nomes dos containers
 SERVER_CONTAINER="web-server"
 CLIENT_CONTAINER="http-client"
 
@@ -57,7 +52,6 @@ fi
 
 echo -e "\n${YELLOW}[5/5] Iniciando containers...${NC}"
 
-# Inicia o servidor
 echo -e "\nIniciando servidor web..."
 docker run -d \
     --name $SERVER_CONTAINER \
@@ -72,11 +66,9 @@ else
     exit 1
 fi
 
-# Aguarda o servidor estar pronto
 echo -e "\nAguardando servidor estar pronto..."
 sleep 3
 
-# Inicia o cliente
 echo -e "\nIniciando cliente HTTP..."
 docker run -d \
     --name $CLIENT_CONTAINER \

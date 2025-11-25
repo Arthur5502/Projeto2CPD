@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # Serviço de Banco de Dados PostgreSQL
   db:
     image: postgres:15-alpine
     container_name: desafio3-db
@@ -23,7 +22,6 @@ services:
     ports:
       - "5432:5432"
 
-  # Serviço de Cache Redis
   cache:
     image: redis:7-alpine
     container_name: desafio3-cache
@@ -41,7 +39,6 @@ services:
     ports:
       - "6379:6379"
 
-  # Serviço Web (Flask API)
   web:
     build:
       context: ./web
@@ -73,14 +70,12 @@ services:
       retries: 3
       start_period: 40s
 
-# Volumes nomeados para persistência de dados
 volumes:
   postgres_data:
     name: desafio3_postgres_data
   redis_data:
     name: desafio3_redis_data
 
-# Rede interna para comunicação entre serviços
 networks:
   app-network:
     name: desafio3-network

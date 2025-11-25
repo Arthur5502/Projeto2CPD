@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Script para parar e limpar recursos do Desafio 1
 
 echo "======================================"
 echo "Parando Desafio 1 - Containers em Rede"

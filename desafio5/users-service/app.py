@@ -1,8 +1,3 @@
-"""
-Microsserviço 1 - Users Service
-Gerencia informações de usuários
-"""
-
 from flask import Flask, jsonify, request
 import logging
 

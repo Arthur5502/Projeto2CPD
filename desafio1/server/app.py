@@ -1,8 +1,3 @@
-"""
-Servidor Web Flask - Desafio 1
-Este servidor responde a requisições HTTP e registra logs de cada acesso.
-"""
-
 from flask import Flask, jsonify, request
 from datetime import datetime
 import logging
@@ -10,18 +5,15 @@ import os
 
 app = Flask(__name__)
 
-# Configuração de logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
-# Contador de requisições
 request_counter = 0
 
 @app.route('/', methods=['GET'])
 def home():
-    """Endpoint principal que retorna informações do servidor"""
     global request_counter
     request_counter += 1
     
@@ -43,12 +35,10 @@ def home():
 
 @app.route('/health', methods=['GET'])
 def health():
-    """Endpoint de health check"""
     return jsonify({"status": "healthy", "service": "web-server"}), 200
 
 @app.route('/stats', methods=['GET'])
 def stats():
-    """Endpoint que retorna estatísticas do servidor"""
     return jsonify({
         "total_requests": request_counter,
         "uptime_message": "Servidor operacional"

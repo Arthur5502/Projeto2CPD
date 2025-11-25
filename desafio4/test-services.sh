@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Script para testar comunicação entre microsserviços
 
 echo "================================================================="
 echo "Testando Comunicação entre Microsserviços - Desafio 4"

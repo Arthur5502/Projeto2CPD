@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Script para executar o Desafio 4 - Microsserviços Independentes
 
 echo "================================================================="
 echo "Desafio 4 - Microsserviços Independentes"

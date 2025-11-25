@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Script para executar o Desafio 2 - Volumes e Persistência
 
 echo "======================================"
 echo "Desafio 2 - Volumes e Persistência"

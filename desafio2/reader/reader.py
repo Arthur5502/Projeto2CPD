@@ -1,14 +1,8 @@
-"""
-Leitor de Dados - Desafio 2
-Este script demonstra que os dados persistem mesmo após remover o container original.
-"""
-
 import psycopg2
 import time
 import logging
 import os
 
-# Configuração de logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
@@ -23,7 +17,6 @@ DB_CONFIG = {
 }
 
 def wait_for_db(max_retries=30):
-    """Aguarda o banco de dados estar pronto"""
     logging.info("Aguardando banco de dados estar pronto...")
     
     for attempt in range(max_retries):
@@ -39,7 +32,6 @@ def wait_for_db(max_retries=30):
     return False
 
 def read_all_tasks():
-    """Lê todas as tarefas do banco de dados"""
     conn = psycopg2.connect(**DB_CONFIG)
     cursor = conn.cursor()
     
@@ -56,7 +48,6 @@ def read_all_tasks():
     return tasks
 
 def read_operation_logs():
-    """Lê os logs de operações"""
     conn = psycopg2.connect(**DB_CONFIG)
     cursor = conn.cursor()
     
@@ -74,15 +65,12 @@ def read_operation_logs():
     return logs
 
 def get_database_info():
-    """Obtém informações sobre o banco de dados"""
     conn = psycopg2.connect(**DB_CONFIG)
     cursor = conn.cursor()
     
-    # Verifica tamanho do banco
     cursor.execute("SELECT pg_database_size(current_database())")
     db_size = cursor.fetchone()[0]
     
-    # Lista todas as tabelas
     cursor.execute("""
         SELECT table_name 
         FROM information_schema.tables 
@@ -100,7 +88,6 @@ def get_database_info():
     }
 
 def main():
-    """Função principal do leitor"""
     print("=" * 70)
     print("LEITOR DE DADOS PERSISTIDOS - Demonstração de Persistência")
     print("=" * 70)
@@ -112,13 +99,11 @@ def main():
         logging.error("✗ Não foi possível conectar ao banco de dados")
         return
     
-    # Obtém informações do banco
     db_info = get_database_info()
     print(f"\n📊 INFORMAÇÕES DO BANCO DE DADOS")
     print(f"Tamanho: {db_info['size_mb']:.2f} MB")
     print(f"Tabelas: {', '.join(db_info['tables'])}")
     
-    # Lê e exibe tarefas
     print("\n" + "=" * 70)
     print("📝 TAREFAS PERSISTIDAS")
     print("=" * 70)
@@ -137,7 +122,6 @@ def main():
         print("\n⚠️  Nenhuma tarefa encontrada no banco de dados.")
         print("Execute a aplicação principal primeiro para criar dados.")
     
-    # Lê e exibe logs de operações
     print("\n" + "=" * 70)
     print("📋 HISTÓRICO DE OPERAÇÕES (últimas 20)")
     print("=" * 70)

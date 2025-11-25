@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Script para demonstrar persistência de dados
 
 echo "============================================================"
 echo "Demonstração de Persistência - Desafio 2"
@@ -25,7 +24,6 @@ echo -e "\n${YELLOW}[1/4] Verificando se o volume de dados existe...${NC}"
 if docker volume inspect $VOLUME_NAME &> /dev/null; then
     echo -e "${GREEN}✓ Volume encontrado: $VOLUME_NAME${NC}"
     
-    # Mostra informações do volume
     echo -e "\n📊 Informações do volume:"
     docker volume inspect $VOLUME_NAME
 else

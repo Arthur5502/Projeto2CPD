@@ -1,8 +1,3 @@
-"""
-Microsserviço B - Serviço Agregador
-Consome dados do Serviço A e combina com informações adicionais
-"""
-
 from flask import Flask, jsonify, request
 import requests
 import logging
@@ -10,17 +5,14 @@ from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
-# Configuração de logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
 
-# URL do Serviço A (usando nome do container na rede Docker)
 SERVICE_A_URL = "http://service-a:5001"
 
-# Dados adicionais simulados (atividades dos usuários)
 user_activities = {
     "1": {"last_login": "2025-11-18 14:30:00", "total_logins": 245, "projects": 8},
     "2": {"last_login": "2025-11-18 10:15:00", "total_logins": 189, "projects": 5},
@@ -30,9 +22,6 @@ user_activities = {
 }
 
 def call_service_a(endpoint, method='GET', data=None):
-    """
-    Função auxiliar para fazer requisições ao Serviço A
-    """
     url = f"{SERVICE_A_URL}{endpoint}"
     
     try:
@@ -68,7 +57,6 @@ def call_service_a(endpoint, method='GET', data=None):
 
 @app.route('/')
 def home():
-    """Endpoint raiz com informações do serviço"""
     return jsonify({
         "service": "Aggregator Service (Microsserviço B)",
         "version": "1.0.0",
@@ -87,7 +75,6 @@ def home():
 
 @app.route('/health')
 def health():
-    """Health check - verifica também a saúde do Serviço A"""
     health_status = {
         "service": "aggregator-service",
         "status": "healthy",
@@ -95,7 +82,6 @@ def health():
         "dependencies": {}
     }
     
-    # Verifica Serviço A
     try:
         service_a_health = call_service_a('/health')
         if service_a_health:
@@ -112,11 +98,6 @@ def health():
 
 @app.route('/users-info', methods=['GET'])
 def get_users_info():
-    """
-    Lista todos os usuários com informações agregadas
-    Combina dados do Serviço A com dados de atividade
-    """
-    # Busca usuários do Serviço A
     users_data = call_service_a('/users')
     
     if not users_data:
@@ -126,7 +107,6 @@ def get_users_info():
     
     users = users_data.get('users', [])
     
-    # Agrega informações de atividade
     aggregated_users = []
     for user in users:
         user_id = user['id']
@@ -136,10 +116,9 @@ def get_users_info():
             "projects": 0
         })
         
-        # Combina informações
         aggregated_user = {
-            **user,  # Dados do Serviço A
-            "activity": activity,  # Dados do Serviço B
+            **user,
+            "activity": activity,
             "days_active": _calculate_days_active(user['active_since']),
             "engagement_level": _calculate_engagement(activity)
         }
@@ -156,10 +135,6 @@ def get_users_info():
 
 @app.route('/users-info/<user_id>', methods=['GET'])
 def get_user_info(user_id):
-    """
-    Busca informações completas de um usuário específico
-    """
-    # Busca usuário do Serviço A
     user_data = call_service_a(f'/users/{user_id}')
     
     if not user_data:
@@ -167,14 +142,12 @@ def get_user_info(user_id):
             "error": f"User {user_id} not found or Service A unavailable"
         }), 404
     
-    # Busca atividade do usuário
     activity = user_activities.get(user_id, {
         "last_login": "N/A",
         "total_logins": 0,
         "projects": 0
     })
     
-    # Monta resposta agregada
     complete_info = {
         "basic_info": user_data,
         "activity_info": activity,
@@ -196,10 +169,6 @@ def get_user_info(user_id):
 
 @app.route('/active-users', methods=['GET'])
 def get_active_users():
-    """
-    Lista apenas usuários ativos com informações detalhadas
-    """
-    # Busca apenas usuários ativos do Serviço A
     users_data = call_service_a('/users?status=active')
     
     if not users_data:
@@ -209,7 +178,6 @@ def get_active_users():
     
     users = users_data.get('users', [])
     
-    # Agrega e enriquece informações
     active_users_info = []
     for user in users:
         user_id = user['id']
@@ -236,9 +204,6 @@ def get_active_users():
 
 @app.route('/user-summary/<user_id>', methods=['GET'])
 def get_user_summary(user_id):
-    """
-    Retorna um resumo executivo de um usuário
-    """
     user_data = call_service_a(f'/users/{user_id}')
     
     if not user_data:
@@ -252,9 +217,9 @@ def get_user_summary(user_id):
         "user_id": user_id,
         "name": user_data['name'],
         "summary": f"{user_data['name']} é {user_data['role']} no departamento de {user_data['department']}, "
-                   f"ativo desde {user_data['active_since']} ({_calculate_days_active(user_data['active_since'])} dias). "
-                   f"Realizou {activity.get('total_logins', 0)} logins e trabalha em {activity.get('projects', 0)} projetos. "
-                   f"Nível de engajamento: {_calculate_engagement(activity)}.",
+                    f"ativo desde {user_data['active_since']} ({_calculate_days_active(user_data['active_since'])} dias). "
+                    f"Realizou {activity.get('total_logins', 0)} logins e trabalha em {activity.get('projects', 0)} projetos. "
+                    f"Nível de engajamento: {_calculate_engagement(activity)}.",
         "status": user_data['status'],
         "engagement_level": _calculate_engagement(activity)
     }
@@ -265,10 +230,6 @@ def get_user_summary(user_id):
 
 @app.route('/stats', methods=['GET'])
 def get_aggregated_stats():
-    """
-    Retorna estatísticas agregadas de ambos os serviços
-    """
-    # Busca estatísticas do Serviço A
     service_a_stats = call_service_a('/stats')
     
     if not service_a_stats:
@@ -276,7 +237,6 @@ def get_aggregated_stats():
             "error": "Could not fetch stats from Service A"
         }), 503
     
-    # Calcula estatísticas adicionais
     total_logins = sum(act.get('total_logins', 0) for act in user_activities.values())
     total_projects = sum(act.get('projects', 0) for act in user_activities.values())
     avg_projects_per_user = total_projects / len(user_activities) if user_activities else 0
@@ -297,10 +257,8 @@ def get_aggregated_stats():
     
     return jsonify(aggregated_stats), 200
 
-# Funções auxiliares
 
 def _calculate_days_active(active_since):
-    """Calcula quantos dias desde que o usuário está ativo"""
     try:
         start_date = datetime.strptime(active_since, '%Y-%m-%d')
         return (datetime.now() - start_date).days
@@ -308,7 +266,6 @@ def _calculate_days_active(active_since):
         return 0
 
 def _calculate_engagement(activity):
-    """Calcula nível de engajamento baseado em atividade"""
     if not activity:
         return "low"
     
@@ -325,12 +282,11 @@ def _calculate_engagement(activity):
         return "low"
 
 def _is_recent_user(active_since):
-    """Verifica se é um usuário recente (menos de 90 dias)"""
     days = _calculate_days_active(active_since)
     return days < 90
 
 def _calculate_avg_logins(active_since, total_logins):
-    """Calcula média de logins por dia"""
+    days = _calculate_days_active(active_since)
     days = _calculate_days_active(active_since)
     if days == 0:
         return 0

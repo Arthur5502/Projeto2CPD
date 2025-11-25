@@ -15,51 +15,51 @@ Desenvolvido como projeto acadêmico para a disciplina de **Computação em Nuve
 ```
 Projeto2CPD/
 │
-├── desafio1/              # Containers em Rede (20 pts)
-│   ├── server/            # Servidor web Flask
-│   ├── client/            # Cliente que consome o servidor
-│   ├── run.sh             # Script automatizado
-│   └── README.md          # Documentação detalhada
+├── desafio1/
+│   ├── server/
+│   ├── client/
+│   ├── run.sh
+│   └── README.md
 │
-├── desafio2/              # Volumes e Persistência de Dados (20 pts)
-│   ├── app/               # Aplicação de tarefas
-│   ├── reader/            # Leitor que valida persistência
-│   ├── run.sh             # Script automatizado
-│   ├── test-persistence.sh  # Teste de persistência
-│   └── README.md          # Documentação detalhada
+├── desafio2/
+│   ├── app/
+│   ├── reader/
+│   ├── run.sh
+│   ├── test-persistence.sh
+│   └── README.md
 │
-├── desafio3/              # Docker Compose (25 pts)
-│   ├── web/               # API de produtos
-│   ├── db/                # PostgreSQL com init script
-│   ├── docker-compose.yml # Orquestração de 3 serviços
-│   ├── run.sh             # Script automatizado
-│   ├── test-api.sh        # Teste da API
-│   └── README.md          # Documentação detalhada
+├── desafio3/
+│   ├── web/
+│   ├── db/
+│   ├── docker-compose.yml
+│   ├── run.sh
+│   ├── test-api.sh
+│   └── README.md
 │
-├── desafio4/              # Microsserviços Independentes (20 pts)
-│   ├── service-a/         # Serviço de Usuários
-│   ├── service-b/         # Serviço Agregador
-│   ├── run.sh             # Script automatizado
-│   ├── test-services.sh   # Teste de comunicação
-│   └── README.md          # Documentação detalhada
+├── desafio4/
+│   ├── service-a/
+│   ├── service-b/
+│   ├── run.sh
+│   ├── test-services.sh
+│   └── README.md
 │
-├── desafio5/              # Microsserviços com API Gateway (25 pts)
-│   ├── gateway/           # API Gateway (ponto único de entrada)
-│   ├── users-service/     # Microsserviço de usuários
-│   ├── orders-service/    # Microsserviço de pedidos
-│   ├── docker-compose.yml # Orquestração completa
-│   ├── run.sh             # Script automatizado
-│   ├── test-gateway.sh    # Teste do gateway
-│   └── README.md          # Documentação detalhada
+├── desafio5/
+│   ├── gateway/
+│   ├── users-service/
+│   ├── orders-service/
+│   ├── docker-compose.yml
+│   ├── run.sh
+│   ├── test-gateway.sh
+│   └── README.md
 │
-└── README.md              # Este arquivo
+└── README.md
 ```
 
 ---
 
 ## 🎯 Descrição dos Desafios
 
-### **Desafio 1 — Containers em Rede** (20 pontos)
+### **Desafio 1 — Containers em Rede**
 
 **Objetivo**: Criar dois containers Docker que se comunicam através de uma rede customizada.
 
@@ -77,7 +77,7 @@ Projeto2CPD/
 
 ---
 
-### **Desafio 2 — Volumes e Persistência de Dados** (20 pontos)
+### **Desafio 2 — Volumes e Persistência de Dados**
 
 **Objetivo**: Demonstrar persistência de dados com Docker volumes.
 
@@ -92,12 +92,12 @@ Projeto2CPD/
 - Banco de dados em containers
 - Validação de persistência
 
-**Como executar**: `cd desafio2 && ./run.sh`  
+**Como executar**: `cd desafio2 && ./run.sh`
 **Testar persistência**: `./test-persistence.sh`
 
 ---
 
-### **Desafio 3 — Docker Compose** (25 pontos)
+### **Desafio 3 — Docker Compose**
 
 **Objetivo**: Orquestrar 3 serviços interdependentes com Docker Compose.
 
@@ -114,12 +114,12 @@ Projeto2CPD/
 - Cache-aside pattern
 - Service dependencies
 
-**Como executar**: `cd desafio3 && ./run.sh`  
+**Como executar**: `cd desafio3 && ./run.sh`
 **Testar API**: `./test-api.sh`
 
 ---
 
-### **Desafio 4 — Microsserviços Independentes** (20 pontos)
+### **Desafio 4 — Microsserviços Independentes**
 
 **Objetivo**: Implementar dois microsserviços que se comunicam via HTTP.
 
@@ -134,12 +134,12 @@ Projeto2CPD/
 - APIs REST
 - Service discovery
 
-**Como executar**: `cd desafio4 && ./run.sh`  
+**Como executar**: `cd desafio4 && ./run.sh`
 **Testar comunicação**: `./test-services.sh`
 
 ---
 
-### **Desafio 5 — Microsserviços com API Gateway** (25 pontos)
+### **Desafio 5 — Microsserviços com API Gateway**
 
 **Objetivo**: Implementar arquitetura completa com API Gateway como ponto único de entrada.
 
@@ -155,7 +155,7 @@ Projeto2CPD/
 - Service Orchestration
 - Segurança (serviços não expostos externamente)
 
-**Como executar**: `cd desafio5 && ./run.sh`  
+**Como executar**: `cd desafio5 && ./run.sh`
 **Testar gateway**: `./test-gateway.sh`
 
 ---

@@ -1,8 +1,3 @@
-"""
-Microsserviço A - Serviço de Usuários
-Fornece uma API REST para gerenciar informações de usuários
-"""
-
 from flask import Flask, jsonify, request
 import logging
 from datetime import datetime, timedelta
@@ -10,14 +5,12 @@ import uuid
 
 app = Flask(__name__)
 
-# Configuração de logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
 
-# Banco de dados simulado em memória
 users_db = {
     "1": {
         "id": "1",
@@ -68,7 +61,6 @@ users_db = {
 
 @app.route('/')
 def home():
-    """Endpoint raiz com informações do serviço"""
     return jsonify({
         "service": "Users Service (Microsserviço A)",
         "version": "1.0.0",
@@ -87,7 +79,6 @@ def home():
 
 @app.route('/health')
 def health():
-    """Health check do serviço"""
     return jsonify({
         "service": "users-service",
         "status": "healthy",
@@ -97,14 +88,11 @@ def health():
 
 @app.route('/users', methods=['GET'])
 def get_users():
-    """Lista todos os usuários"""
-    # Suporta filtros por query params
     status_filter = request.args.get('status')
     department_filter = request.args.get('department')
     
     users = list(users_db.values())
     
-    # Aplica filtros se fornecidos
     if status_filter:
         users = [u for u in users if u['status'] == status_filter]
     if department_filter:
@@ -119,7 +107,6 @@ def get_users():
 
 @app.route('/users/<user_id>', methods=['GET'])
 def get_user(user_id):
-    """Busca usuário por ID"""
     user = users_db.get(user_id)
     
     if user:
@@ -131,19 +118,15 @@ def get_user(user_id):
 
 @app.route('/users', methods=['POST'])
 def create_user():
-    """Cria novo usuário"""
     data = request.get_json()
     
-    # Validação de campos obrigatórios
     required_fields = ['name', 'email', 'role', 'department']
     for field in required_fields:
         if field not in data:
             return jsonify({"error": f"Missing required field: {field}"}), 400
     
-    # Gera novo ID
     user_id = str(uuid.uuid4())[:8]
     
-    # Cria novo usuário
     new_user = {
         "id": user_id,
         "name": data['name'],
@@ -164,14 +147,12 @@ def create_user():
 
 @app.route('/users/<user_id>', methods=['PUT'])
 def update_user(user_id):
-    """Atualiza usuário existente"""
     if user_id not in users_db:
         return jsonify({"error": "User not found"}), 404
     
     data = request.get_json()
     user = users_db[user_id]
     
-    # Atualiza apenas campos fornecidos
     updatable_fields = ['name', 'email', 'role', 'department', 'status']
     for field in updatable_fields:
         if field in data:
@@ -186,7 +167,6 @@ def update_user(user_id):
 
 @app.route('/users/<user_id>', methods=['DELETE'])
 def delete_user(user_id):
-    """Remove usuário"""
     if user_id not in users_db:
         return jsonify({"error": "User not found"}), 404
     
@@ -200,20 +180,16 @@ def delete_user(user_id):
 
 @app.route('/stats')
 def get_stats():
-    """Retorna estatísticas do serviço"""
     users = list(users_db.values())
     
-    # Calcula estatísticas
     active_users = len([u for u in users if u['status'] == 'active'])
     inactive_users = len([u for u in users if u['status'] == 'inactive'])
     
-    # Usuários por departamento
     departments = {}
     for user in users:
         dept = user['department']
         departments[dept] = departments.get(dept, 0) + 1
     
-    # Usuários por role
     roles = {}
     for user in users:
         role = user['role']

@@ -1,7 +1,5 @@
-# Dockerfile para a Aplicação de Tarefas
 FROM python:3.11-slim
 
-# Instala dependências do sistema para psycopg2
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     gcc \

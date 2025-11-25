@@ -1,7 +1,5 @@
-# Dockerfile para o serviço Web
 FROM python:3.11-slim
 
-# Instala dependências do sistema
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     gcc \

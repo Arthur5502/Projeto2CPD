@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # Microsserviço 1: Users Service
   users-service:
     build:
       context: ./users-service
@@ -15,7 +14,6 @@ services:
       timeout: 10s
       retries: 3
 
-  # Microsserviço 2: Orders Service
   orders-service:
     build:
       context: ./orders-service
@@ -29,7 +27,6 @@ services:
       timeout: 10s
       retries: 3
 
-  # API Gateway (ponto único de entrada)
   gateway:
     build:
       context: ./gateway

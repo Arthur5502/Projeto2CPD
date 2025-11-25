@@ -1,8 +1,3 @@
-"""
-Aplicação de Gerenciamento de Tarefas - Desafio 2
-Demonstra persistência de dados com PostgreSQL e Docker Volumes
-"""
-
 import psycopg2
 from psycopg2 import sql
 import time
@@ -10,13 +5,11 @@ import logging
 from datetime import datetime
 import os
 
-# Configuração de logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
-# Configurações do banco de dados
 DB_CONFIG = {
     'host': os.getenv('DB_HOST', 'localhost'),
     'database': os.getenv('DB_NAME', 'tasksdb'),
@@ -26,7 +19,6 @@ DB_CONFIG = {
 }
 
 def wait_for_db(max_retries=30):
-    """Aguarda o banco de dados estar pronto"""
     logging.info("Aguardando banco de dados estar pronto...")
     
     for attempt in range(max_retries):
@@ -43,7 +35,6 @@ def wait_for_db(max_retries=30):
     return False
 
 def get_db_connection():
-    """Cria uma conexão com o banco de dados"""
     try:
         conn = psycopg2.connect(**DB_CONFIG)
         return conn
@@ -52,13 +43,11 @@ def get_db_connection():
         raise
 
 def initialize_database():
-    """Inicializa o banco de dados e cria as tabelas"""
     logging.info("Inicializando banco de dados...")
     
     conn = get_db_connection()
     cursor = conn.cursor()
     
-    # Cria a tabela de tarefas se não existir
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS tasks (
             id SERIAL PRIMARY KEY,
@@ -70,7 +59,6 @@ def initialize_database():
         )
     """)
     
-    # Cria a tabela de logs para rastrear operações
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS operation_logs (
             id SERIAL PRIMARY KEY,
@@ -87,7 +75,6 @@ def initialize_database():
     logging.info("✓ Banco de dados inicializado com sucesso!")
 
 def add_task(title, description=""):
-    """Adiciona uma nova tarefa"""
     conn = get_db_connection()
     cursor = conn.cursor()
     
@@ -97,7 +84,6 @@ def add_task(title, description=""):
     )
     task_id = cursor.fetchone()[0]
     
-    # Registra a operação
     cursor.execute(
         "INSERT INTO operation_logs (operation, details) VALUES (%s, %s)",
         ("CREATE_TASK", f"Criada tarefa ID {task_id}: {title}")
@@ -111,12 +97,11 @@ def add_task(title, description=""):
     return task_id
 
 def list_tasks():
-    """Lista todas as tarefas"""
     conn = get_db_connection()
     cursor = conn.cursor()
     
     cursor.execute("""
-        SELECT id, title, description, status, created_at, updated_at 
+        SELECT id, title, description, status, created_at, updated_at
         FROM tasks 
         ORDER BY created_at DESC
     """)
@@ -128,7 +113,6 @@ def list_tasks():
     return tasks
 
 def update_task_status(task_id, new_status):
-    """Atualiza o status de uma tarefa"""
     conn = get_db_connection()
     cursor = conn.cursor()
     
@@ -137,7 +121,6 @@ def update_task_status(task_id, new_status):
         (new_status, task_id)
     )
     
-    # Registra a operação
     cursor.execute(
         "INSERT INTO operation_logs (operation, details) VALUES (%s, %s)",
         ("UPDATE_TASK", f"Tarefa ID {task_id} atualizada para status '{new_status}'")
@@ -150,11 +133,9 @@ def update_task_status(task_id, new_status):
     logging.info(f"✓ Tarefa ID {task_id} atualizada para status '{new_status}'")
 
 def get_statistics():
-    """Obtém estatísticas do banco de dados"""
     conn = get_db_connection()
     cursor = conn.cursor()
     
-    # Conta tarefas por status
     cursor.execute("""
         SELECT status, COUNT(*) 
         FROM tasks 
@@ -162,11 +143,9 @@ def get_statistics():
     """)
     status_counts = dict(cursor.fetchall())
     
-    # Conta total de tarefas
     cursor.execute("SELECT COUNT(*) FROM tasks")
     total_tasks = cursor.fetchone()[0]
     
-    # Conta total de operações
     cursor.execute("SELECT COUNT(*) FROM operation_logs")
     total_operations = cursor.fetchone()[0]
     
@@ -180,7 +159,6 @@ def get_statistics():
     }
 
 def show_menu():
-    """Exibe o menu interativo"""
     print("\n" + "=" * 60)
     print("SISTEMA DE GERENCIAMENTO DE TAREFAS")
     print("=" * 60)
@@ -193,7 +171,6 @@ def show_menu():
     print("=" * 60)
 
 def add_sample_tasks():
-    """Adiciona tarefas de exemplo para demonstração"""
     samples = [
         ("Estudar Docker Volumes", "Aprender sobre persistência de dados"),
         ("Configurar PostgreSQL", "Configurar banco de dados com volumes"),
@@ -208,20 +185,16 @@ def add_sample_tasks():
     logging.info(f"✓ {len(samples)} tarefas de exemplo adicionadas!")
 
 def main():
-    """Função principal da aplicação"""
     logging.info("=" * 60)
     logging.info("Iniciando aplicação de gerenciamento de tarefas")
     logging.info("=" * 60)
     
-    # Aguarda o banco estar pronto
     if not wait_for_db():
         logging.error("Encerrando aplicação - banco de dados indisponível")
         return
     
-    # Inicializa o banco de dados
     initialize_database()
     
-    # Menu interativo
     while True:
         show_menu()
         choice = input("\nEscolha uma opção: ").strip()
