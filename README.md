@@ -472,9 +472,9 @@ Cada camada adiciona **complexidade controlada**, preparando para arquiteturas c
 
 ---
 
-## 📄 Licença
+## 📄 Mensagem ao professor!
 
-Este projeto é de uso acadêmico. Desenvolvido para fins educacionais.
+Neste projeto utilizei a AI como um facilitador para as partes que eu nao tava conseguindo fazer direito, E também utilizei para fazer esse README da melhor forma e que ficasse entendível para o senhor!
 
 ---
 
